@@ -8,6 +8,11 @@ import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import { theme } from '../theme/theme';
 import axios from 'axios';
 
+import { login } from '../store/actions/auth';
+import { connect } from 'react-redux';
+
+import ngFetch from '../utils/ngFetch';
+
 const baseUrl = process.env.API_URL;
 
 const styles = theme => ({
@@ -33,8 +38,10 @@ export class LandingPage extends React.Component {
     console.log(response);
     axios.post(`${baseUrl}users/login/google`, { idToken: response.tokenObj.id_token })
       .then((resp) => {
-        const jwtToken = resp.data.userToken;
-        console.log("JWT Token", jwtToken)
+        const { userToken, user } = resp.data;
+        this.props.login(user, userToken);
+        localStorage.setItem('jwt', userToken);
+        console.log(ngFetch);
       });
   }
 
@@ -72,6 +79,8 @@ export class LandingPage extends React.Component {
   render = () => {
     const { classes } = this.props;
     const quote = this.getQuote();
+    console.log(ngFetch);
+
     return (
       <MuiThemeProvider theme={theme}>
         <Box className={classes.container}>
@@ -108,4 +117,12 @@ export class LandingPage extends React.Component {
   }
 }
 
-export default withStyles(styles)(LandingPage);
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  login: (user, jwt) => dispatch(login(user, jwt)),
+});
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(LandingPage));
