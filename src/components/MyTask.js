@@ -90,6 +90,7 @@ export class MyTaskReport extends React.Component {
       //   }
       // }, true);
       const user = this.props.loggedInUser.email.split('@')[0];
+      console.log(user)
       const response = await axios.get(this.onwerDetailsURL, {
         params: {
           user: user

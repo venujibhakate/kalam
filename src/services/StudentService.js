@@ -8,21 +8,8 @@ import StatusSelect from '../components/StatusSelect'
 import StudentFeedback from '../components/FeedbackPage';
 import UpdateFeedback from '../components/UpdateFeedback';
 
- const allStagesOptions = Object.keys(allStages).map(x => { return { value: x, label: allStages[x] } });
- const allStatusOptions = Object.keys(status).map(x => { return { value: x, label: status[x] } });
-
-
-// const actionColumn = {
-//   title: 'Action',
-//   field: 'Action',
-//   filtering: false,
-//   render: rowData => {
-//     return <Box data-id={rowData.stage}>
-//         {rowData.stageTitle}
-//       </Box>
-//   }
-
-// };
+const allStagesOptions = Object.keys(allStages).map(x => { return { value: x, label: allStages[x] } });
+const allStatusOptions = Object.keys(status).map(x => { return { value: x, label: status[x] } });
 
 const setColumn = {
   title: 'Set',
@@ -253,7 +240,6 @@ const StudentService = {
       lastUpdatedColumn,
     ],
     partnerDashboard: [
-      // actionColumn,
       setColumn,
       nameColumn,
       cityColumn,
@@ -266,7 +252,6 @@ const StudentService = {
       lastUpdatedColumn
     ],
     softwareCourse: [
-      // actionColumn,
       setColumn,
       nameColumn,
       cityColumn,
@@ -336,6 +321,7 @@ const StudentService = {
     } catch (e) {
       x.number = null;
     }
+
     x.gender = x.gender == 1 ? 'Female' : 'Male';
     x.stageTitle = allStages[x.stage];
 
