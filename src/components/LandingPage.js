@@ -13,7 +13,7 @@ import { withSnackbar } from 'notistack';
 import { changeFetching } from '../store/actions/auth';
 
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 const testUrl = 'http://join.navgurukul.org/k/'
 const styles = theme => ({
   loginContainer: {

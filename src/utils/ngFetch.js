@@ -2,7 +2,7 @@ import axios from 'axios';
 // import { useHistory } from "react-router-dom";
 import history from './history';
 
-const BASE_URL = process.env.API_URL;
+const BASE_URL = process.env.BASE_API_URL;
 
 export default async function ngFetch(url, method='GET', options={}, useAuth=true) {
   let opts = {

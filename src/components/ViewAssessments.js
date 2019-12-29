@@ -26,7 +26,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import CsvUpload from './Uploadcsv';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),

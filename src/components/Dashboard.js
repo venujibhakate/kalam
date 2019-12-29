@@ -21,7 +21,7 @@ import GlobalService from '../services/GlobalService';
 import { EventEmitter } from './events';
 
 // API USage : https://blog.logrocket.com/patterns-for-data-fetching-in-react-981ced7e5c56/
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 
 const styles = theme => ({
   innerTable: {

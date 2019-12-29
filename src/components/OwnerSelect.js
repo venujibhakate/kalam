@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { withSnackbar } from 'notistack';
 import { EventEmitter } from './events';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 const animatedComponents = makeAnimated();
 
 export class OwnerSelect extends React.Component {

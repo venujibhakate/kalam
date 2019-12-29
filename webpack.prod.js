@@ -13,7 +13,7 @@ module.exports = merge(common, {
   },
   plugins: [
     new CompressionPlugin(),
-    new webpack.DefinePlugin({ "process.env.API_URL": JSON.stringify("http://join.navgurukul.org/api/")})
+    new webpack.DefinePlugin({ "process.env.BASE_API_URL": JSON.stringify("http://join.navgurukul.org/api/")})
     // new CompressionPlugin({
     //     asset: '[path].gz[query]',
     //     algorithm: 'gzip',

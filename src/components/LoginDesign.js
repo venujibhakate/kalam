@@ -13,7 +13,7 @@ import axios from 'axios';
 
 import { connect } from 'react-redux';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 
 const styles = theme => ({
   loginContainer: {

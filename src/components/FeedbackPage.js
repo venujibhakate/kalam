@@ -13,7 +13,7 @@ import {Box} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { EventEmitter } from './events';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 
 const styles = theme => ({
   container: {

@@ -11,7 +11,7 @@ import { changeFetching } from '../store/actions/auth';
 
 import {withRouter} from 'react-router-dom';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 const styles = theme => ({
   container: {
     display: 'flex',

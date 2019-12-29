@@ -34,7 +34,7 @@ import { changeFetching } from '../store/actions/auth';
 
 import {withRouter} from 'react-router-dom';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),

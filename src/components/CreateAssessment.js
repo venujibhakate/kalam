@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import { Dialog, DialogTitle, DialogContent,DialogContentText, DialogActions } from '@material-ui/core';
 import Spinner from 'react-spinner-material';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 
 export class CreateAssessment extends React.Component {
 

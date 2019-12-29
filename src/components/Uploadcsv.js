@@ -7,7 +7,7 @@ import ReactJson from 'react-json-view'
 import { Modal, Box } from '@material-ui/core';
 import Spinner from 'react-spinner-material';
 
-const baseUrl = process.env.API_URL;
+const baseUrl = process.env.BASE_API_URL;
 const styles = theme => ({
   innerTable: {
     marginLeft: '3vw',
