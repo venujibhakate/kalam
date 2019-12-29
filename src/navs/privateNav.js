@@ -44,6 +44,11 @@ export const publicNavs = [
         name: 'Assigned Users',
         icon: <ExtensionIcon />
     },
+    {
+        url: '/assign/users',
+        name: 'new table',
+        icon: <ExtensionIcon />
+    },
     // {
     //     url: '/movies',
     //     name: 'Movies',

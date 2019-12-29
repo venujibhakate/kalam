@@ -68,6 +68,7 @@ export class StudentDetails extends React.Component {
     } else {
       const modalStyle = getModalStyle()
       const { classes, details } = this.props  
+      console.log(details)
       return <div>
         <Button color="primary" align="right" onClick={this.handleOpen}>
           <DetailsIcon />

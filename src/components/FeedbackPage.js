@@ -14,7 +14,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { EventEmitter } from './events';
 
 const baseUrl = process.env.BASE_API_URL;
-
+console.log(baseUrl)
 const styles = theme => ({
   container: {
     display: 'flex',
