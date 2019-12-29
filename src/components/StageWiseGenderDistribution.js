@@ -14,6 +14,7 @@ import Box from '@material-ui/core/Box';
 import { theme } from '../theme/theme';
 
 import { changeFetching } from '../store/actions/auth';
+import { allStages } from '../config';
 
 import GlobalService from '../services/GlobalService';
 import StudentService from '../services/StudentService';
@@ -28,12 +29,12 @@ const styles = theme => ({
   }
 })
 
-export class MyTaskReport extends React.Component {
+export class StageWiseGenderDistribution extends React.Component {
 
   constructor(props) {
 
     super(props);
-    this.onwerDetailsURL = baseURL + 'students/my_tasks';
+    this.StageWiseGenderDistributionURL = baseURL + 'students/report/all';
     
     this.state = {
       data: [],
@@ -41,15 +42,20 @@ export class MyTaskReport extends React.Component {
   }
 
   dataConvert = (data) => {
-    const newData = []
-    for (let i=0; i< data.length; i++) {
-      data[i].name = data[i].student.name;
-      delete data[i].student;
-      newData.push(data[i])      
-    }
+    const newData = [];
+    for (const [key, value] of Object.entries(data)) {
+      const dic = {};
+      dic.female = value[1];
+      dic.male = value[2];
+      dic.transgender = value[3];
+      dic.unspecified = value[null];
+      dic.total = dic.female + dic.male + dic.transgender + dic.unspecified;
+      dic.stage = allStages[key];
+      newData.push(dic);
+    } 
     this.setState({
       data: newData,
-    })
+    });
   }
 
   render = () => {
@@ -57,7 +63,7 @@ export class MyTaskReport extends React.Component {
     return <Box>
       <MuiThemeProvider theme={theme}>
         <MaterialTable
-          columns={StudentService.columnMyReports}
+          columns={StudentService.columnDanglingReports}
           data={this.state.data}
           icons={GlobalService.tableIcons}
           options={{
@@ -82,27 +88,15 @@ export class MyTaskReport extends React.Component {
   async fetchonwerReport() {
     try {
       this.props.fetchingStart()
-      // response = ngFetch(this.studentsURL, 'GET', {
-      //   params: {
-      //     dataType: this.dataType,
-      //     fromDate: this.fromDate,
-      //     toDate: this.toDate
-      //   }
-      // }, true);
-      const user = this.props.loggedInUser.email.split('@')[0];
-      const response = await axios.get(this.onwerDetailsURL, {
-        params: {
-          user: user
-        }
-      });
+      const response = await axios.get(this.StageWiseGenderDistributionURL, { });
       this.dataConvert(response.data.data);
       this.props.fetchingFinish();
     } catch (e) {
       console.log(e)
       this.props.fetchingFinish()
     }
-  }
-}
+  };
+};
 
 const mapStateToProps = (state) => ({
   loggedInUser: state.auth.loggedInUser
@@ -113,4 +107,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchingFinish: () => dispatch(changeFetching(false))
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MyTaskReport));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(StageWiseGenderDistribution));

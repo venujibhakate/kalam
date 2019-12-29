@@ -1,6 +1,3 @@
-// Todo
-// Logic of RQC Columns
-
 import 'date-fns';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -24,6 +21,7 @@ import { withRouter } from 'react-router-dom';
 import GlobalService from '../services/GlobalService';
 import StudentService from '../services/StudentService';
 import StageTransitions from './StageTransitions';
+import StudentDetails from './StudentDetails';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { EventEmitter } from './events';
 
@@ -224,6 +222,22 @@ export class AdmissionsDash extends React.Component {
               />
             )
           }}
+          actions= {[
+            {
+              icon: 'Save',
+              tooltip: 'Student Details',
+              onClick: (event, rowData) => { return rowData }
+            }
+          ]}
+          components={
+            {
+              Action: 
+                props => (
+                  <StudentDetails
+                    details={props.data}/>
+                )
+            }
+          }
           options={{
             headerStyle: {
               color: theme.palette.primary.main

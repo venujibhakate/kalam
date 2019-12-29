@@ -1,5 +1,5 @@
 import React from 'react';
-import { allStages, feedbackableStages, status } from '../config';
+import { allStages, feedbackableStages, feedbackableStagesData } from '../config';
 import Moment from 'react-moment';
 import Box from '@material-ui/core/Box';
 import StageSelect from '../components/StageSelect';
@@ -9,8 +9,6 @@ import StudentFeedback from '../components/FeedbackPage';
 import UpdateFeedback from '../components/UpdateFeedback';
 
 const allStagesOptions = Object.keys(allStages).map(x => { return { value: x, label: allStages[x] } });
-const allStatusOptions = Object.keys(status).map(x => { return { value: x, label: status[x] } });
-
 const setColumn = {
   title: 'Set',
   field: 'SetName',
@@ -66,19 +64,6 @@ const genderColumn = {
   filtering: false
 }
 
-const stagePartnerColumn = {
-  title: 'Stage',
-  field: 'stageTitle',
-  selectFilter: true,
-  sfMulti: true,
-  filtering: false,
-  sfTitle: 'stages',
-  render: rowData => {
-    return <Box data-id={rowData.stage}>
-        {rowData.stageTitle}
-      </Box>
-  }
-}
 
 const stageColumn = {
   title: 'Stage',
@@ -148,7 +133,7 @@ const feedbackColumnTransition = {
               user={'@' + rowData['loggedInUser'].user_name.toString().split(" ").join('').toLowerCase()}
               feedback={rowData['feedback']['feedback']}
             />
-            {rowData['feedback']['feedback']}
+            { rowData['feedback']['feedback'].split ('\n\n').map((item, i) => <p key={i}> {item} </p>) } 
           </div> 
           : null
       }
@@ -191,17 +176,52 @@ const statusColumnTransition = {
   field: 'status',
   render: rowData => {
     if (rowData['feedback']) {
+      const allstatus = feedbackableStagesData[rowData['feedback']['student_stage']].status;
+      const allStatusOptions = allstatus.map(x => { return {value: x, label: (x.charAt(0).toUpperCase()+x.slice(1)).match(/[A-Z][a-z]+/g).join(" ")} });
       const state = rowData['feedback']['state'];
-      rowData['statusTitle'] = status[state];
-    }
-    return rowData['feedback'] ? <div>
-      <StatusSelect
+      const status = allstatus[allstatus.indexOf(state)];
+      if (status) {
+        rowData['statusTitle'] = (status.charAt(0).toUpperCase()+status.slice(1)).match(/[A-Z][a-z]+|[0-9]+/g).join(" ")
+      }
+      return <div>
+        <StatusSelect
         allStatusOptions={allStatusOptions}
         studentId={rowData['feedback'].studentId}
         rowData={rowData}
-      />
-    </div> : null;
+        />
+        </div>
+    }
+    return null;
   }
+}
+
+const deadlineColumnTransition = {
+  title: 'Deadline',
+  field: 'deadlineAt',
+  render: rowData => {
+    const ifExistingDeadlineDate = (rowData.feedback && rowData.feedback.deadlineAt) && (!rowData.feedback.finishedAt || !rowData.feedback.feedback);
+    if (ifExistingDeadlineDate) {
+      const deadline = feedbackableStagesData[rowData['feedback']['student_stage']].deadline;
+      const diff = new Date().getTime() - new Date(rowData.feedback.deadlineAt).getTime()
+      const hours = Math.floor(diff / 1000 / 60 / 60);
+      const remainigTime = deadline - hours;
+      if (remainigTime < 0) {
+        return "Your deadline is fineshed please do this work ASAP."
+      } else if (!rowData.feedback.feedback){
+        return  <p> <b>{remainigTime}</b> Hours are remaing to do this work please do it ASAP </p>
+      }
+      return  <p> <b>{remainigTime}</b> Hours are remaing to do this work please do it ASAP </p>
+    }
+  }
+}
+
+const finishedColumnTransition = {
+  title: 'Finished',
+  field: 'finishedAt',
+  render: rowData => {
+    const ifExistingFinishedDate = rowData.feedback && (rowData.feedback.finishedAt && rowData.feedback.feedback);
+    return ifExistingFinishedDate ? <Moment format="D MMM YYYY" withTitle>{rowData.feedback.finishedAt}</Moment> : null;
+  },
 }
 
 const StageColumnMyreport = {
@@ -211,7 +231,10 @@ const StageColumnMyreport = {
 
 const feedbackColumnMyreport = {
   title: 'Feedback',
-  field: 'feedback'
+  field: 'feedback',
+  render: rowData => {
+    return rowData.feedback ? rowData['feedback'].split ('\n\n').map((item, i) => <p key={i}> {item} </p>) : null; 
+  }
 }
 
 const stausColumnMyreport = {
@@ -230,7 +253,57 @@ const assignDateColumnMyreport = {
   render: rowData => {
     return <Moment format="D MMM YYYY" withTitle>{rowData.createdAt}</Moment>
   }
-} 
+}
+
+const StageColumnDanglingReport = {
+  title: 'Stage',
+  field: 'stage'
+}
+
+const TotalFemaleDanglingReport = {
+  title: 'Female',
+  field: 'female'
+}
+
+const TotalmaleDanglingReport = {
+  title: 'Male',
+  field: 'male'
+}
+
+const TotalTransDanglingReport = {
+  title: 'Transgender',
+  field: 'transgender'
+}
+
+const TotalUnspecifiedDanglingReport = {
+  title: 'Unspecified',
+  field: 'unspecified'
+}
+
+const TotalDanglingReport = {
+  title: 'Total Dangling',
+  field: 'total'
+}
+
+const EmailColumn = {
+  title: 'Email',
+  field: 'email'
+}
+
+const QualificationColumn = {
+  title: 'Qualification',
+  field: 'qualification'
+}
+
+const ReligonColumn = {
+  title: 'Religon',
+  field: 'religon'
+}
+
+const CasteColumn = {
+  title: 'Caste',
+  field: 'caste'
+}
 
 const StudentService = {
   columns: {
@@ -247,7 +320,7 @@ const StudentService = {
       numberColumn,
       marksColumn,
       genderColumn,
-      stagePartnerColumn,
+      stageColumn,
       addedAtColumn,
       lastUpdatedColumn
     ],
@@ -272,7 +345,9 @@ const StudentService = {
       feedbackColumnTransition,
       ownerColumnTransition,
       timeColumnTransition,
-      statusColumnTransition
+      statusColumnTransition,
+      deadlineColumnTransition,
+      finishedColumnTransition
     ],
     partnerDashboard: [
       stageColumnTransition,
@@ -284,7 +359,9 @@ const StudentService = {
       feedbackColumnTransition,
       ownerColumnTransition,
       timeColumnTransition,
-      statusColumnTransition
+      statusColumnTransition,
+      deadlineColumnTransition,
+      finishedColumnTransition
     ]
   },
 
@@ -295,6 +372,20 @@ const StudentService = {
     stausColumnMyreport,
     ownerColumnMyreport,
     assignDateColumnMyreport
+  ],
+  columnDanglingReports: [
+    StageColumnDanglingReport,
+    TotalFemaleDanglingReport,
+    TotalmaleDanglingReport,
+    TotalTransDanglingReport,
+    TotalUnspecifiedDanglingReport,
+    TotalDanglingReport
+  ],
+  columnStudentDetails: [
+    EmailColumn,
+    QualificationColumn,
+    ReligonColumn,
+    CasteColumn
   ],
 
   setupPre: (columns) => {
@@ -327,7 +418,7 @@ const StudentService = {
 
     x.marks = x.enrolmentKey[0] ? parseInt(x.enrolmentKey[0].totalMarks, 10) : null;
     x.marks = isNaN(x.marks) ? null : x.marks;
-
+    x.lastUpdated = x.lastTransition ? x.lastTransition.createdAt : null;
     return x
   },
   addOptions: (columns, dataRow) => {

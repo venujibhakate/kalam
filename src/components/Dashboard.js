@@ -11,12 +11,14 @@ import Box from '@material-ui/core/Box';
 
 import { theme } from '../theme/theme';
 
-import { changeFetching } from '../store/actions/auth';
+import { changeFetching, setupUsers } from '../store/actions/auth';
 
 import {withRouter} from 'react-router-dom';
 
 import StudentService from '../services/StudentService';
+import StageTransitions from './StageTransitions';
 import GlobalService from '../services/GlobalService';
+import { EventEmitter } from './events';
 
 // API USage : https://blog.logrocket.com/patterns-for-data-fetching-in-react-981ced7e5c56/
 const baseUrl = process.env.API_URL;
@@ -49,11 +51,27 @@ export class DashboardPage extends React.Component {
 
     super(props);
     this.dataURL = baseUrl+'partners/'+this.props.match.params.partnerId+'/students';
-
+    this.usersURL = baseUrl + 'users/getall'
     this.state = {
       data: [],
       sData: undefined, //subsetData
     }
+
+    EventEmitter.subscribe('stageChange', this.stageChangeEvent);
+  }
+
+  stageChangeEvent = (iData) => {
+    const rowIds = this.state.data.map(x=>x.id)
+    const rowIndex = rowIds.indexOf(iData.rowData.id);
+    
+    let dataElem = this.state.data[rowIndex];
+    dataElem.stageTitle = iData.selectedValue.label;
+    dataElem.stage = iData.selectedValue.value;
+    
+    let newData = this.state.data;
+    newData[rowIndex] = dataElem;
+
+    this.setState({data:newData });
   }
 
   handleChange = (field, filterFn) => {
@@ -95,7 +113,6 @@ export class DashboardPage extends React.Component {
 
   render = () => {
     const { classes } = this.props;
-    const columnTransitions = StudentService.columnTransitions["partnerDashboard"];
 
     if (!this.state.data.length) {
       return <Box></Box>
@@ -128,21 +145,10 @@ export class DashboardPage extends React.Component {
           icons={GlobalService.tableIcons}
           detailPanel={rowData => {
             return (
-              <Box className={classes.innerTable} my={2}>
-                <MaterialTable
-                  columns={columnTransitions}
-                  data={rowData.transitions}
-                  options={{
-                    search: false,
-                    paging: false,
-                    toolbar: false,
-                    showTitle: false,
-                    headerStyle: {
-                      color: theme.palette.primary.main
-                    },
-                    }}
-                />
-              </Box>
+              <StageTransitions
+                dataType={'softwareCourse'}
+                studentId={rowData.id}
+              />
             )
           }}
           options={{
@@ -160,10 +166,23 @@ export class DashboardPage extends React.Component {
   }
 
   componentDidMount() {
+    this.fetchStudents()
     this.fetchUsers();
   }
 
   async fetchUsers() {
+    try {
+      this.props.fetchingStart()
+      const response = await axios.get(this.usersURL, {});
+      this.props.usersSetup(response.data.data);
+      this.props.fetchingFinish()
+    } catch (e) {
+      console.log(e)
+      this.props.fetchingFinish()
+    }
+  }
+
+  async fetchStudents() {
     try {
       this.props.fetchingStart()
       const response = await axios.get(this.dataURL);
@@ -177,7 +196,8 @@ export class DashboardPage extends React.Component {
 
 const mapDispatchToProps = (dispatch)=>({
   fetchingStart: () => dispatch(changeFetching(true)),
-  fetchingFinish: () => dispatch(changeFetching(false))
+  fetchingFinish: () => dispatch(changeFetching(false)),
+  usersSetup: (users) => dispatch(setupUsers(users))
 });
 
 export default withRouter(withStyles(styles)(connect(undefined, mapDispatchToProps)(DashboardPage)))
