@@ -28,6 +28,11 @@ export const publicNavs = [
         name: 'My Tasks',
         icon: <ExtensionIcon />
     },
+    {
+        url: '/assign',
+        name: 'My assign Users',
+        icon: <ExtensionIcon/>
+    },
     // {
     //     url: '/movies',
     //     name: 'Movies',

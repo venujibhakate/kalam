@@ -8,6 +8,7 @@ import AdmissionsDash from '../components/AdmissionsDash';
 import AssessmentAttempts from '../components/AssessmentAttempts';
 import ViewAssessments from '../components/ViewAssessments';
 import MyTaskReport from '../components/MyTask';
+import AssignTaskReport from '../components/AssignTask';
 import NotFoundPage from '../components/NotFoundPage';
 
 import PublicRoute from './PublicRouter';
@@ -23,7 +24,7 @@ const AppRouter = () => (
         <PrivateRoute path="/tasks" component={MyTaskReport} />
         <PrivateRoute path="/students" component={AdmissionsDash} />
         <PrivateRoute path="/students/:dataType" component={AdmissionsDash} />
-
+        <PrivateRoute path="/assign" component={AssignTaskReport} />
         <PublicRoute path="/partner/add" component={AddPartner} />
         <PublicRoute path="/partner/:partnerId" component={DashboardPage} />
         <PublicRoute path="/partner/:partnerId/assessments" component={ViewAssessments} />

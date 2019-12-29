@@ -28,12 +28,12 @@ const styles = theme => ({
   }
 })
 
-export class MyTaskReport extends React.Component {
+export class AssignTaskReport extends React.Component {
 
   constructor(props) {
 
     super(props);
-    this.onwerDetailsURL = baseURL + 'students/my_tasks';
+    this.AssiggnUserDetailsURL = baseURL + 'students/my_assigns';
     
     this.state = {
       data: [],
@@ -53,7 +53,6 @@ export class MyTaskReport extends React.Component {
   }
 
   render = () => {
-
     return <Box>
       <MuiThemeProvider theme={theme}>
         <MaterialTable
@@ -76,10 +75,10 @@ export class MyTaskReport extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchonwerReport();
+    this.fetchAssignReport();
   }
 
-  async fetchonwerReport() {
+  async fetchAssignReport() {
     try {
       this.props.fetchingStart()
       // response = ngFetch(this.studentsURL, 'GET', {
@@ -90,11 +89,12 @@ export class MyTaskReport extends React.Component {
       //   }
       // }, true);
       const user = this.props.loggedInUser.email.split('@')[0];
-      const response = await axios.get(this.onwerDetailsURL, {
+      const response = await axios.get(this.AssiggnUserDetailsURL, {
         params: {
           user: user
         }
       });
+      console.log(response)
       this.dataConvert(response.data.data);
       this.props.fetchingFinish();
     } catch (e) {
@@ -113,4 +113,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchingFinish: () => dispatch(changeFetching(false))
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MyTaskReport));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AssignTaskReport));

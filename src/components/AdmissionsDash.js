@@ -5,7 +5,7 @@ import 'date-fns';
 import React from 'react';
 import { connect } from 'react-redux';
 import DateFnsUtils from '@date-io/date-fns';
-
+import Button from '@material-ui/core/Button';
 import MaterialTable from "material-table";
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 
@@ -26,6 +26,7 @@ import StudentService from '../services/StudentService';
 import StageTransitions from './StageTransitions';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { EventEmitter } from './events';
+import DetailsIcon from '@material-ui/icons/Details';
 
 import makeAnimated from 'react-select/animated';
 const animatedComponents = makeAnimated();
@@ -223,6 +224,40 @@ export class AdmissionsDash extends React.Component {
                 studentId={rowData.id}
               />
             )
+          }}
+          actions={[
+            {
+              icon: 'save',
+              tooltip: 'Save User',
+              onClick: (event, rowData) => 
+              <MaterialTable
+              title="Action Overriding Preview"
+              columns={[
+                { title: 'Name', field: 'name' },
+                { title: 'Surname', field: 'surname' },
+                { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
+                {
+                  title: 'Birth Place',
+                  field: 'birthCity',
+                  lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
+                },
+              ]}
+              />
+              
+            }
+          ]}
+          components={{
+            Action: props => (
+              <p
+                onClick={(event) => props.action.onClick(event, props.data)}
+                color="primary"
+                variant="contained"
+                style={{textTransform: 'none'}}
+                size="small"
+              >
+               <DetailsIcon/>
+              </p>
+            ),
           }}
           options={{
             headerStyle: {
