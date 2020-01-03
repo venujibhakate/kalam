@@ -2,7 +2,7 @@ import 'date-fns';
 import React from 'react';
 import { connect } from 'react-redux';
 import DateFnsUtils from '@date-io/date-fns';
-
+import MUIDataTable from "mui-datatables";
 import MaterialTable from "material-table";
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 
@@ -65,7 +65,7 @@ export class AdmissionsDash extends React.Component {
   }
 
   stageChangeEvent = (iData) => {
-    const rowIds = this.state.data.map(x => x.id)
+    const rowIds = this.state.data.map(x=>x.id)
     const rowIndex = rowIds.indexOf(iData.rowData.id);
     // this.setState(({data}) => ({
     //   data: [
@@ -82,11 +82,11 @@ export class AdmissionsDash extends React.Component {
     let dataElem = this.state.data[rowIndex];
     dataElem.stageTitle = iData.selectedValue.label;
     dataElem.stage = iData.selectedValue.value;
-
+    
     let newData = this.state.data;
     newData[rowIndex] = dataElem;
 
-    this.setState({ data: newData });
+    this.setState({data:newData });
   }
 
   changeDataType = option => {
@@ -142,7 +142,7 @@ export class AdmissionsDash extends React.Component {
 
   render = () => {
     const { classes } = this.props;
-
+    const columns=["name"]
     const options = <Box>
       <Select
         className={"filterSelectGlobal"}
@@ -163,7 +163,7 @@ export class AdmissionsDash extends React.Component {
           value={this.fromDate}
           id="date-picker-dialog"
           label="From Date"
-          format="MM/dd/yyyy" z
+          format="MM/dd/yyyy"
           onChange={this.changeFromDate}
           KeyboardButtonProps={{
             'aria-label': 'change date',
@@ -188,29 +188,29 @@ export class AdmissionsDash extends React.Component {
     if (!this.state.data.length) {
       return options;
     }
-
-    let filterSelectRows = []
-    columns.map((x) => {
-      if ('selectFilter' in x)
-        filterSelectRows.push(
-          <FilterSelect
-            filter={{
-              name: x.sfTitle,
-              field: x.field
-            }}
-            ifMulti={x.sfMulti}
-            key={x.field}
-            options={x.options}
-            handleChange={this.handleChange}
-          />
-        )
-    })
+console.log(this.state.data,"twinnkle")
+    // let filterSelectRows = []
+    // columns.map((x) => {
+    //   if ('selectFilter' in x)
+    //     filterSelectRows.push(
+    //       <FilterSelect
+    //         filter={{
+    //           name: x.sfTitle,
+    //           field: x.field
+    //         }}
+    //         ifMulti={x.sfMulti}
+    //         key={x.field}
+    //         options={x.options}
+    //         handleChange={this.handleChange}
+    //       />
+    //     )
+    // })
     return <Box>
-      {/* <MuiThemeProvider theme={theme}> */}
+      <MuiThemeProvider theme={theme}>
         {options}
-        {filterSelectRows}
+        {/* {filterSelectRows} */}
         <div className={classes.clear}></div>
-        <MaterialTable
+        <MUIDataTable
           columns={columns}
           data={this.state.sData ? this.state.sData : this.state.data}
           icons={GlobalService.tableIcons}
@@ -222,7 +222,7 @@ export class AdmissionsDash extends React.Component {
               />
             )
           }}
-          actions={[
+          actions= {[
             {
               icon: 'Save',
               tooltip: 'Student Details',
@@ -231,10 +231,10 @@ export class AdmissionsDash extends React.Component {
           ]}
           components={
             {
-              Action:
+              Action: 
                 props => (
                   <StudentDetails
-                    details={props.data} />
+                    details={props.data}/>
                 )
             }
           }
@@ -249,7 +249,7 @@ export class AdmissionsDash extends React.Component {
             filtering: true
           }}
         />
-      {/* </MuiThemeProvider> */}
+      </MuiThemeProvider>
     </Box>
   }
 
@@ -258,9 +258,9 @@ export class AdmissionsDash extends React.Component {
     this.fetchUsers();
   }
 
-  componentWillUnmount() {
-    EventEmitter.unsubscribe('stageChange');
-  }
+  // componentWillUnmount() {
+  //   EventEmitter.unsubscribe('stageChange');
+  // }
 
   async fetchUsers() {
     try {

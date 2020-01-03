@@ -4,11 +4,11 @@
 import 'date-fns';
 import React from 'react';
 import { connect } from 'react-redux';
-import MaterialTable from "material-table";
+// import MaterialTable from "material-table";
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import Box from '@material-ui/core/Box';
-
+import MUIDataTable from "mui-datatables";
 import { theme } from '../theme/theme';
 import { changeFetching } from '../store/actions/auth';
 import { withRouter } from 'react-router-dom';
@@ -73,15 +73,17 @@ export class Transition extends React.Component {
     this.fetchtransition();
   }
 
-  componentWillUnmount() {
-    EventEmitter.unsubscribe('transitionsChange'+this.props.studentId);
-  }
+  // componentWillUnmount() {
+  //   EventEmitter.unsubscribe('transitionsChange'+this.props.studentId);
+  // }
 
   render = () => {
+    const StudentService.column[dataType]=["Email"]
+    // const a =StudentService.columnTransitions[dataType]
     const { dataType, classes } = this.props;
     return <Box className={classes.innerTable} my={2}>
-      <MaterialTable
-        columns={StudentService.columnTransitions[dataType]}
+      <MUIDataTable
+        columns={StudentService.column[dataType]}
         data={this.state.data}
         icons={GlobalService.tableIcons}
 

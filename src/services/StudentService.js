@@ -338,7 +338,7 @@ const StudentService = {
     ]
   },
 
-  columnTransitions: {
+  column: {
     requestCallback: [
       stageColumnTransition,
       whenColumnTransition,
