@@ -1,10 +1,8 @@
-// Todo
-// Logic of RQC Columns
-
 import 'date-fns';
 import React from 'react';
 import { connect } from 'react-redux';
-// import MaterialTable from "material-table";
+
+import MaterialTable from "material-table";
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import Box from '@material-ui/core/Box';
@@ -78,12 +76,61 @@ export class Transition extends React.Component {
   // }
 
   render = () => {
-    const StudentService.column[dataType]=["Email"]
-    // const a =StudentService.columnTransitions[dataType]
-    const { dataType, classes } = this.props;
+    const {  classes } = this.props;
+    // const columns=["toStage"]
+    const columns = [
+      {
+        name: "toStage",
+        label: "Stage",
+        options: {
+         filter: true,
+         sort: true,
+        }
+       },
+       {
+        name: "createdAt",
+        label: "When?",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+       {
+        name: "Feedback",
+        label: "feedback",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+       {
+        name: "user",
+        label: "Owner",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+       {
+        name: "createdAt",
+        label: "Time",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+       {
+        name: "Status",
+        label: "status",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+      ];
     return <Box className={classes.innerTable} my={2}>
       <MUIDataTable
-        columns={StudentService.column[dataType]}
+        columns={columns}
         data={this.state.data}
         icons={GlobalService.tableIcons}
 

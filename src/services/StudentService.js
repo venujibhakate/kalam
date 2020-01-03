@@ -8,6 +8,7 @@ import StatusSelect from '../components/StatusSelect'
 import StudentFeedback from '../components/FeedbackPage';
 import UpdateFeedback from '../components/UpdateFeedback';
 
+
 const allStagesOptions = Object.keys(allStages).map(x => { return { value: x, label: allStages[x] } });
 const setColumn = {
   title: 'Set',
@@ -130,7 +131,7 @@ const feedbackColumnTransition = {
               student_stage={rowData['toStage']}
               studentId={rowData['feedback'].studentId}
               userId={rowData['loggedInUser'].id}
-              user={'@' + rowData['loggedInUser'].user_name.toString().split(" ").join('').toLowerCase()}
+              user={'@' + rowData['loggedInUser'].user_name.toString().split("/ ").join('').toLowerCase()}
               feedback={rowData['feedback']['feedback']}
             />
             { rowData['feedback']['feedback'].split ('\n\n').map((item, i) => <p key={i}> {item} </p>) } 
@@ -189,7 +190,9 @@ const statusColumnTransition = {
         studentId={rowData['feedback'].studentId}
         rowData={rowData}
         />
+        <abc a={this.state.data}/>
         </div>
+       
     }
     return null;
   }
@@ -338,7 +341,7 @@ const StudentService = {
     ]
   },
 
-  column: {
+  columnTransitions: {
     requestCallback: [
       stageColumnTransition,
       whenColumnTransition,
@@ -429,8 +432,8 @@ const StudentService = {
         }
       }
       return column
+    
     })
   }
 }
-
 export default StudentService;

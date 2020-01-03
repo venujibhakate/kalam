@@ -87,6 +87,8 @@ export class AdmissionsDash extends React.Component {
     newData[rowIndex] = dataElem;
 
     this.setState({ data: newData });
+
+    
   }
 
   changeDataType = option => {
@@ -163,7 +165,7 @@ export class AdmissionsDash extends React.Component {
           value={this.fromDate}
           id="date-picker-dialog"
           label="From Date"
-          format="MM/dd/yyyy" z
+          format="MM/dd/yyyy" 
           onChange={this.changeFromDate}
           KeyboardButtonProps={{
             'aria-label': 'change date',
@@ -217,8 +219,8 @@ export class AdmissionsDash extends React.Component {
           detailPanel={rowData => {
             return (
               <StageTransitions
-                dataType={this.dataType}
-                studentId={rowData.id}
+                dataType = {this.dataType}
+                studentId = {rowData.id}
               />
             )
           }}
@@ -258,9 +260,9 @@ export class AdmissionsDash extends React.Component {
     this.fetchUsers();
   }
 
-  componentWillUnmount() {
-    EventEmitter.unsubscribe('stageChange');
-  }
+  // componentWillUnmount() {
+  //   EventEmitter.unsubscribe('stageChange');
+  // }
 
   async fetchUsers() {
     try {
