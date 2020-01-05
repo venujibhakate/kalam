@@ -112,6 +112,7 @@ const whenColumnTransition = {
   title: 'When?',
   field: 'createdAt',
   render: rowData => {
+    console.log(rowData)
     return <Moment format="D MMM YYYY" withTitle>{rowData.createdAt}</Moment>
   },
   defaultSort: 'desc'
@@ -158,8 +159,13 @@ const ownerColumnTransition = {
   field: 'user',
   render: rowData => {
     return rowData['feedback'] || feedbackableStages.indexOf(rowData['toStage'])>-1 ? <div>
+      {/* console.log(rowData['feedback'],"ttuiyh") */}
       <OwnerSelect rowData={rowData} />
-    </div> : null;
+ <StageSelect
+      allStagesOptions={allStagesOptions}
+      studentId={rowData['id']}
+      rowData={rowData}
+    /></div>: null;
   }
 }
 

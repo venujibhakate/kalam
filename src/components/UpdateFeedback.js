@@ -100,7 +100,6 @@ export class UpdateFeedback extends React.Component {
   }
   
   getFeedbackEditable = (feedbackDetails) => {
-    console.log(feedbackDetails.user)
     return feedbackDetails.user + ": \n\n"+ feedbackDetails.feedback;
   }
 
@@ -115,7 +114,7 @@ export class UpdateFeedback extends React.Component {
             <Dialog
                 open={this.state.dialogOpen}
                 onClose={this.handleClose}
-            >
+              >
                 <form className={classes.container}>
                     <h1 style={{color: '#f05f40',textAlign: 'center'}}>Update Feedback</h1>
                     <TextField
