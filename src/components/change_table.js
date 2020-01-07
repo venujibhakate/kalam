@@ -142,7 +142,17 @@ export class AdmissionsDash extends React.Component {
 
   render = () => {
     const { classes } = this.props;
-    const columns=["name"]
+    const columns = [
+      {
+        name: "name",
+        label: "Name",
+        options: {
+          filter: true,
+          sort: true,
+          
+        }
+      },
+    ]
     const options = <Box>
       <Select
         className={"filterSelectGlobal"}

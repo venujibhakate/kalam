@@ -1,11 +1,20 @@
 import 'date-fns';
 import React from 'react';
+import {
+  createMuiTheme,
+  MuiThemeProvider,
+  withStyles
+} from "@material-ui/core/styles";
+
 import { connect } from 'react-redux';
+// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+
+
 import { allStages, feedbackableStages, feedbackableStagesData } from '../config';
 import MaterialTable from "material-table";
 // import OwnerSelect from '../components/OwnerSelect';
 import StudentFeedback from '../components/FeedbackPage';
-import { withStyles } from '@material-ui/core/styles';
+// import { withStyles } from '@material-ui/core/styles';
 import StatusSelect from '../components/StatusSelect'
 import axios from 'axios';
 import StageSelect from '../components/StageSelect';
@@ -46,6 +55,7 @@ const styles = theme => ({
 })
 export class Transition extends React.Component {
 
+
   constructor(props) {
     super(props);
     this.transitionURL = `${baseURL}students/transitionsWithFeedback/${this.props.studentId}`;
@@ -81,7 +91,16 @@ export class Transition extends React.Component {
   componentWillUnmount() {
     EventEmitter.unsubscribe('transitionsChange' + this.props.studentId);
   }
-
+  // getMuiTheme = () =>
+  //   createMuiTheme({
+  //     overrides: {
+  //       MUIDataTable: {
+  //         responsiveScroll: {
+  //           maxHeight: 'none',
+  //         },
+  //       },
+  //     },
+  //   });
   render = () => {
     const { classes } = this.props;
     const allStagesOptions = Object.keys(allStages).map(x => { return { value: x, label: allStages[x] } });
@@ -102,7 +121,7 @@ export class Transition extends React.Component {
         label: "When?",
         options: {
           filter: true,
-          sort: false,
+          sort: true,
           customBodyRender: (value) => {
             return <Moment format="D MMM YYYY" withTitle>{value}</Moment>
           }
@@ -114,10 +133,10 @@ export class Transition extends React.Component {
         label: "Feedback",
         options: {
           filter: true,
-          sort: false,
+          sort: true,
           customBodyRender: (rowData) => {
             const obj = this.state.data.filter(obj => obj.toStage === rowData)[0];
-           
+
             const ifExistingFeedback = obj.feedback && feedbackableStages.indexOf(obj.toStage) > -1;
             return <div>
               {
@@ -144,24 +163,10 @@ export class Transition extends React.Component {
                     studentId={obj.studentId}
                     userId={obj.loggedInUser.id}
                   />
-                  
                   : null
               }
-              
-              {/* <StageSelect
-                allStagesOptions={allStagesOptions}
-                studentId={obj}
-                rowData={obj}
-              /> */}
-
             </div>
-            
-            
-
-
-            }
-          
-
+          }
         }
       },
       {
@@ -169,24 +174,20 @@ export class Transition extends React.Component {
         label: "Owner",
         options: {
           filter: true,
-          sort: false,
-
+          sort: true,
+          display: true,
           customBodyRender: (value) => {
-           
-
             const valu = this.state.data.filter(valu => valu.toStage === value)[0];
-            console.log(valu,"venu")
-            const ifExistingFeedback = valu.feedback && feedbackableStages.indexOf(valu.toStage) > -1;
+            // console.log(valu, "venu")
+            const ifExistingFeedback = valu.feedback || feedbackableStages.indexOf(valu.toStage) > -1;
             return <div>
-            {
-            ifExistingFeedback ?
-            <OwnerSelect rowData={valu} />
-              
-              :null
+              {
+                ifExistingFeedback ?
+                  <OwnerSelect rowData={valu} />
 
-          
-            }
-           </div>
+                  : null
+              }
+            </div>
           }
         }
       },
@@ -195,7 +196,8 @@ export class Transition extends React.Component {
         label: "Time",
         options: {
           filter: true,
-          sort: false,
+          sort: true,
+          display: true,
           customBodyRender: (rowData) => {
             return rowData ? <Moment format="D MMM YYYY" withTitle>{rowData}</Moment> : null;
 
@@ -207,57 +209,111 @@ export class Transition extends React.Component {
         label: "status",
         options: {
           filter: true,
-          sort: false,
+          sort: true,
+          display: true,
           customBodyRender: (rowData) => {
             const valu = this.state.data.filter(valu => valu.toStage === rowData)[0];
-          if (valu['feedback']) {
-            const allstatus = feedbackableStagesData[valu['feedback']['student_stage']].status;
-            const allStatusOptions = allstatus.map(x => { return {value: x, label: (x.charAt(0).toUpperCase()+x.slice(1)).match(/[A-Z][a-z]+/g).join(" ")} });
-            const state = valu['feedback']['state'];
-            const status = allstatus[allstatus.indexOf(state)];
-            if (status) {
-              valu['statusTitle'] = (status.charAt(0).toUpperCase()+status.slice(1)).match(/[A-Z][a-z]+|[0-9]+/g).join(" ")
-            }
-            return <div>
-              <StatusSelect
-              allStatusOptions={allStatusOptions}
-              studentId={valu['feedback'].studentId}
-              rowData={valu}
-              />
-             
-              </div>
-             
-          }
-          return null;
-        }
-      
-        }
+            if (valu['feedback']) {
 
+
+              const allstatus = feedbackableStagesData[valu['feedback']['student_stage']].status;
+              const allStatusOptions = allstatus.map(x => { return { value: x, label: (x.charAt(0).toUpperCase() + x.slice(1)).match(/[A-Z][a-z]+/g).join(" ") } });
+              const state = valu['feedback']['state'];
+              const status = allstatus[allstatus.indexOf(state)];
+
+              if (status) {
+                valu['statusTitle'] = (status.charAt(0).toUpperCase() + status.slice(1)).match(/[A-Z][a-z]+|[0-9]+/g).join(" ")
+              }
+
+              return <div>
+                <StatusSelect
+                  allStatusOptions={allStatusOptions}
+                  studentId={valu['feedback'].studentId}
+                  rowData={valu}
+                />
+
+              </div>
+
+            }
+            return null;
+          }
+        }
+      },
+      {
+        name: "toStage",
+        label: "Deadline",
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => {
+            const valu = this.state.data.filter(valu => valu.toStage === value)[0];
+            const ifExistingDeadlineDate = (valu.feedback && valu.feedback.deadlineAt) && (!valu.feedback.finishedAt || !valu.feedback.feedback);
+            if (ifExistingDeadlineDate) {
+              const deadline = feedbackableStagesData[valu['feedback']['student_stage']].deadline;
+              const diff = new Date().getTime() - new Date(valu.feedback.deadlineAt).getTime()
+              const hours = Math.floor(diff / 1000 / 60 / 60);
+              const remainigTime = deadline - hours;
+              if (remainigTime < 0) {
+                return "Your deadline is fineshed please do this work ASAP."
+              } else if (!valu.feedback.feedback) {
+                return <p> <b>{remainigTime}</b> Hours are remaing to do this work please do it ASAP </p>
+              }
+              return <p> <b>{remainigTime}</b> Hours are remaing to do this work please do it ASAP </p>
+            }
+          }
+
+        }
+      },
+      {
+        name: "toStage",
+        label: "Finished",
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => {
+            const valu = this.state.data.filter(valu => valu.toStage === value)[0];
+            const ifExistingFinishedDate = valu.feedback && (valu.feedback.finishedAt && valu.feedback.feedback);
+            return ifExistingFinishedDate ? <Moment format="D MMM YYYY" withTitle>{valu.feedback.finishedAt}</Moment> : null;
+          },
+        }
 
       },
     ];
 
     return <Box className={classes.innerTable} my={2}>
-      <MUIDataTable
+      <MuiThemeProvider theme={this.getMuiTheme()}><MUIDataTable
         columns={columns}
         data={this.state.data}
         icons={GlobalService.tableIcons}
-
         options={{
           search: false,
           paging: false,
           toolbar: false,
           showTitle: false,
+          filter: true,
+          filterType: "dropdown",
+          // responsive: "stacked",
           headerStyle: {
             color: theme.palette.primary.main,
             zIndex: 0
           },
         }}
+
       />
+      </MuiThemeProvider>
     </Box>
   }
 }
-
+// getMuiTheme = () =>
+//     createMuiTheme({
+//       overrides: {
+//       MUIDataTable: {
+//         responsiveScroll: {
+//           maxHeight: 'none',
+//         },
+//       },
+//     },
+//     });
 const mapStateToProps = (state) => ({
   loggedInUser: state.auth.loggedInUser
 });

@@ -161,11 +161,7 @@ const ownerColumnTransition = {
     return rowData['feedback'] || feedbackableStages.indexOf(rowData['toStage'])>-1 ? <div>
       {/* console.log(rowData['feedback'],"ttuiyh") */}
       <OwnerSelect rowData={rowData} />
- <StageSelect
-      allStagesOptions={allStagesOptions}
-      studentId={rowData['id']}
-      rowData={rowData}
-    /></div>: null;
+ </div>: null;
   }
 }
 
@@ -196,7 +192,7 @@ const statusColumnTransition = {
         studentId={rowData['feedback'].studentId}
         rowData={rowData}
         />
-        <abc a={this.state.data}/>
+        
         </div>
        
     }

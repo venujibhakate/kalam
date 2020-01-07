@@ -1,12 +1,13 @@
 import 'date-fns';
 import React from 'react';
+import { allStages, feedbackableStages, feedbackableStagesData } from '../config';
 import { connect } from 'react-redux';
 import DateFnsUtils from '@date-io/date-fns';
-
-import MaterialTable from "material-table";
+import MUIDataTable from "mui-datatables";
+import ChevronRight from '@material-ui/icons/ChevronRight';
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
-
-import FilterSelect from './FilterSelect'
+import StageSelect from '../components/StageSelect';
+import Button from '@material-ui/core/Button';
 import Select from 'react-select';
 
 import axios from 'axios';
@@ -17,7 +18,7 @@ import { theme } from '../theme/theme';
 import { changeFetching, setupUsers } from '../store/actions/auth';
 
 import { withRouter } from 'react-router-dom';
-
+import Moment from 'react-moment';
 import GlobalService from '../services/GlobalService';
 import StudentService from '../services/StudentService';
 import StageTransitions from './StageTransitions';
@@ -27,7 +28,7 @@ import { EventEmitter } from './events';
 
 import makeAnimated from 'react-select/animated';
 const animatedComponents = makeAnimated();
-
+const allStagesOptions = Object.keys(allStages).map(x => { return { value: x, label: allStages[x] } });
 // API USage : https://blog.logrocket.com/patterns-for-data-fetching-in-react-981ced7e5c56/
 const baseURL = process.env.API_URL;
 
@@ -65,7 +66,7 @@ export class AdmissionsDash extends React.Component {
   }
 
   stageChangeEvent = (iData) => {
-    const rowIds = this.state.data.map(x => x.id)
+    const rowIds = this.state.data.map(x=>x.id)
     const rowIndex = rowIds.indexOf(iData.rowData.id);
     // this.setState(({data}) => ({
     //   data: [
@@ -82,13 +83,11 @@ export class AdmissionsDash extends React.Component {
     let dataElem = this.state.data[rowIndex];
     dataElem.stageTitle = iData.selectedValue.label;
     dataElem.stage = iData.selectedValue.value;
-
+    
     let newData = this.state.data;
     newData[rowIndex] = dataElem;
 
-    this.setState({ data: newData });
-
-    
+    this.setState({data:newData });
   }
 
   changeDataType = option => {
@@ -144,7 +143,144 @@ export class AdmissionsDash extends React.Component {
 
   render = () => {
     const { classes } = this.props;
-
+    const columns = [
+      {
+        name: "",
+        label: "",
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: rowData => {
+            // return <ChevronRight
+            //  details={rowData}/>
+            return  <Button color="primary" align="right" onClick={this.props.data}>
+            <ChevronRight/>
+          </Button>
+             
+             }
+   
+        }
+      },
+      {
+        name: "action",
+        label: "Action",
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: rowData => {
+         return <StudentDetails
+          details={rowData}/>
+          
+          }
+        }
+      },
+      {
+      name: "SetName",
+      label: "Set",
+      options: {
+        filter: true,
+        sort: true,
+      }
+    
+    },
+      {
+        name: "name",
+        label: "Name",
+        options: {
+          filter: true,
+          sort: true,
+          
+          
+        }
+      },
+      {
+        name: "city",
+        label: "City",
+        options: {
+          filter: true,
+          sort: true,
+          
+        }
+      },
+      {
+        name: "state",
+        label: "State",
+        options: {
+          filter: true,
+          sort: true,
+          
+        }
+      },
+      {
+        name: "number",
+        label: "Number",
+        options: {
+          filter: true,
+          sort: true,
+          
+        }
+      },
+      {
+        name: "marks",
+        label: "Marks",
+        options: {
+          filter: true,
+          sort: true,
+          
+        }
+      },
+      {
+        name: "gender",
+        label: "Gender",
+        options: {
+          filter: true,
+          sort: true,
+          
+        }
+      },
+      {
+        name: "stage",
+        label: "Stage",
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: rowData => {
+            return <StageSelect
+               allStagesOptions={allStagesOptions}
+               studentId={rowData['id']}
+                rowData={rowData}
+            />
+          }
+          
+        }
+      },
+      {
+        name: "createdAt",
+        label: "Added At",
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => {
+            return <Moment format="D MMM YYYY" withTitle>{value}</Moment>
+          }
+       
+          }
+          
+        },
+      
+      {
+        name: "lastUpdated",
+        label: "Last Updated",
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => {
+            return <Moment format="D MMM YYYY" withTitle>{value}</Moment>
+          }
+       
+        }
+      },
+    ]
     const options = <Box>
       <Select
         className={"filterSelectGlobal"}
@@ -165,7 +301,7 @@ export class AdmissionsDash extends React.Component {
           value={this.fromDate}
           id="date-picker-dialog"
           label="From Date"
-          format="MM/dd/yyyy" 
+          format="MM/dd/yyyy"
           onChange={this.changeFromDate}
           KeyboardButtonProps={{
             'aria-label': 'change date',
@@ -190,41 +326,41 @@ export class AdmissionsDash extends React.Component {
     if (!this.state.data.length) {
       return options;
     }
-
-    let filterSelectRows = []
-    columns.map((x) => {
-      if ('selectFilter' in x)
-        filterSelectRows.push(
-          <FilterSelect
-            filter={{
-              name: x.sfTitle,
-              field: x.field
-            }}
-            ifMulti={x.sfMulti}
-            key={x.field}
-            options={x.options}
-            handleChange={this.handleChange}
-          />
-        )
-    })
+console.log(this.state.data,"twinnkle")
+    // let filterSelectRows = []
+    // columns.map((x) => {
+    //   if ('selectFilter' in x)
+    //     filterSelectRows.push(
+    //       <FilterSelect
+    //         filter={{
+    //           name: x.sfTitle,
+    //           field: x.field
+    //         }}
+    //         ifMulti={x.sfMulti}
+    //         key={x.field}
+    //         options={x.options}
+    //         handleChange={this.handleChange}
+    //       />
+    //     )
+    // })
     return <Box>
-      {/* <MuiThemeProvider theme={theme}> */}
+      <MuiThemeProvider theme={theme}>
         {options}
-        {filterSelectRows}
+        {/* {filterSelectRows} */}
         <div className={classes.clear}></div>
-        <MaterialTable
+        <MUIDataTable
           columns={columns}
           data={this.state.sData ? this.state.sData : this.state.data}
           icons={GlobalService.tableIcons}
           detailPanel={rowData => {
             return (
               <StageTransitions
-                dataType = {this.dataType}
-                studentId = {rowData.id}
+                dataType={this.dataType}
+                studentId={rowData.id}
               />
             )
           }}
-          actions={[
+          actions= {[
             {
               icon: 'Save',
               tooltip: 'Student Details',
@@ -233,10 +369,10 @@ export class AdmissionsDash extends React.Component {
           ]}
           components={
             {
-              Action:
+              Action: 
                 props => (
                   <StudentDetails
-                    details={props.data} />
+                    details={props.data}/>
                 )
             }
           }
@@ -251,7 +387,7 @@ export class AdmissionsDash extends React.Component {
             filtering: true
           }}
         />
-      {/* </MuiThemeProvider> */}
+      </MuiThemeProvider>
     </Box>
   }
 
@@ -260,9 +396,9 @@ export class AdmissionsDash extends React.Component {
     this.fetchUsers();
   }
 
-   componentWillUnmount() {
-    EventEmitter.unsubscribe('stageChange');
-  }
+  // componentWillUnmount() {
+  //   EventEmitter.unsubscribe('stageChange');
+  // }
 
   async fetchUsers() {
     try {
