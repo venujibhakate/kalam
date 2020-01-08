@@ -6,11 +6,16 @@ import {
   withStyles
 } from "@material-ui/core/styles";
 
+import {
+  Modal, Button
+} from '@material-ui/core';
+
 import { connect } from 'react-redux';
 // import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import { allStages, feedbackableStages, feedbackableStagesData } from '../config';
+
 import MaterialTable from "material-table";
 // import OwnerSelect from '../components/OwnerSelect';
 import StudentFeedback from '../components/FeedbackPage';
@@ -35,32 +40,44 @@ import { EventEmitter } from './events';
 // API USage : https://blog.logrocket.com/patterns-for-data-fetching-in-react-981ced7e5c56/
 const baseURL = process.env.API_URL;
 
+function getModalStyle() {
+  const top = 50 // + rand()
+  const left = 50 //+ rand()
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+    overflowY: 'scroll',
+    maxHeight: '90vh',
+    width: "90%"
+  };
+}
+
 const styles = theme => ({
-  innerTable: {
+  paper: {
+    position: 'absolute',
     marginLeft: '3vw',
     marginRight: '3vw',
     width: '94vw',
-    marginTop: '5',
-    marginBottom: '5',
     [theme.breakpoints.up('md')]: {
       margin: 'auto',
-      width: '80%',
-      marginTop: 5,
-      marginBottom: 5
+      width: '50%'
     },
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(4),
+    outline: 'none',
   },
-  clear: {
-    clear: 'both'
-  }
 })
-export class Transition extends React.Component {
 
+export class Transition extends React.Component {
 
   constructor(props) {
     super(props);
-    this.transitionURL = `${baseURL}students/transitionsWithFeedback/${this.props.studentId}`;
     this.state = {
       data: [],
+      modalOpen: false,
     }
     EventEmitter.subscribe('transitionsChange' + this.props.studentId, this.transitionsChangeEvent);
   }
@@ -71,9 +88,9 @@ export class Transition extends React.Component {
 
   async fetchtransition() {
     try {
+      this.transitionURL = `${baseURL}students/transitionsWithFeedback/${this.props.studentId}`;
       this.props.fetchingStart()
       const response = await axios.get(this.transitionURL, {});
-      // console.log(response.data.data)
       const newData = response.data.data.map(v => ({ ...v, loggedInUser: this.props.loggedInUser }))
       this.setState({
         data: newData
@@ -84,25 +101,26 @@ export class Transition extends React.Component {
     }
   }
 
-  componentDidMount() {
+  handleClose = () => {
+    this.setState({
+      modalOpen: false
+    })
+  };
+
+  handleOpen = () => {
     this.fetchtransition();
-  }
+    this.setState({
+      modalOpen: true
+    })
+  };
 
   componentWillUnmount() {
     EventEmitter.unsubscribe('transitionsChange' + this.props.studentId);
   }
-  // getMuiTheme = () =>
-  //   createMuiTheme({
-  //     overrides: {
-  //       MUIDataTable: {
-  //         responsiveScroll: {
-  //           maxHeight: 'none',
-  //         },
-  //       },
-  //     },
-  //   });
+
   render = () => {
     const { classes } = this.props;
+    const modalStyle = getModalStyle()
     const allStagesOptions = Object.keys(allStages).map(x => { return { value: x, label: allStages[x] } });
     const columns = [
       {
@@ -280,40 +298,42 @@ export class Transition extends React.Component {
       },
     ];
 
-    return <Box className={classes.innerTable} my={2}>
-      <MuiThemeProvider theme={this.getMuiTheme()}><MUIDataTable
-        columns={columns}
-        data={this.state.data}
-        icons={GlobalService.tableIcons}
-        options={{
-          search: false,
-          paging: false,
-          toolbar: false,
-          showTitle: false,
-          filter: true,
-          filterType: "dropdown",
-          // responsive: "stacked",
-          headerStyle: {
-            color: theme.palette.primary.main,
-            zIndex: 0
-          },
-        }}
+    return !this.state.modalOpen ? <div>
+      <Button color="primary" align="right" onClick={this.handleOpen}>
+        <AssessmentIcon color="primary" />&nbsp;&nbsp;
+    </Button>
+    </div> :
+      <Modal
+      open={this.state.modalOpen}
+      onClose={this.handleClose}
+    >
 
-      />
-      </MuiThemeProvider>
-    </Box>
+        <Box style={modalStyle} className={classes.paper}>
+          <MUIDataTable
+            columns={columns}
+            data={this.state.data}
+            icons={GlobalService.tableIcons}
+            options={{
+              search: false,
+              selectableRows: 'none',
+              paging: false,
+              toolbar: false,
+              showTitle: false,
+              filter: true,
+              filterType: "dropdown",
+              responsive: "stacked",
+              headerStyle: {
+                color: theme.palette.primary.main,
+                zIndex: 0
+              },
+            }}
+
+          />
+        </Box>
+</Modal>
   }
 }
-// getMuiTheme = () =>
-//     createMuiTheme({
-//       overrides: {
-//       MUIDataTable: {
-//         responsiveScroll: {
-//           maxHeight: 'none',
-//         },
-//       },
-//     },
-//     });
+
 const mapStateToProps = (state) => ({
   loggedInUser: state.auth.loggedInUser
 });
