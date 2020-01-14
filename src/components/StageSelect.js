@@ -32,8 +32,8 @@ export class StageSelect extends React.Component {
   }
 
   render = () => {
-    const { allStagesOptions, rowData } = this.props;
-    const selectedValue = { value: rowData.stage, label: rowData.stageTitle }
+    const { allStagesOptions, rowData ,label} = this.props;
+    const selectedValue = { value: rowData, label: label}
     return <Select
         className={"filterSelectStage"}
         // defaultValue={selectedValue}

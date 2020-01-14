@@ -9,7 +9,7 @@ import MaterialTable from "material-table";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
-
+import MUIDataTable from "mui-datatables";
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Check from '@material-ui/icons/Check';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
@@ -92,39 +92,59 @@ export class ModalStages extends React.Component {
 
     this.columns = [
       {
-        title: 'ID',
-        field: 'id',
+        name: "id",
+        label: "ID",
+        options: {
+          filter: true,
+          sort: true,
+        }
       },
       {
-        title: 'Name',
-        field: 'name',
+        name: 'name',
+        label: 'Name',
+        options: {
+          filter: true,
+          sort: true,
+        }
       },
       {
-        title: 'Assessment URL',
-        field: 'assessmentUrl',
-        render: rowData => {
+        name: 'assessmentUrl',
+        lable: 'Assessment URL',
+        options: {
+          filter: true,
+          sort: true,
+      
+        customBodyRender: rowData => {
           if (rowData.assessmentUrl) {
             return <a target="_blank" href={rowData.assessmentUrl}>Link to Assessment</a>
           } else {
             return ""
           }
+        }
          }
       },
       {
-        title: 'Answer Key URL',
-        field: 'answerKeyUrl',
-        render: rowData => {
+        name: 'answerKeyUrl',
+        lable: 'Answer Key URL',
+        options: {
+          filter: true,
+          sort: true,
+        customBodyRender: rowData => {
           if (rowData.answerKeyUrl) {
             return <a target="_blank" href={rowData.answerKeyUrl}>Link to Answer Key</a>
           } else {
             return ""
           }
         }
+      }
       },
       {
-        title: 'Question Set ID',
-        field: 'questionSetId',
-        render: rowData => {
+        name: 'questionSetId',
+        lable: 'Question Set ID',
+        options: {
+          filter: true,
+          sort: true,
+        customBodyRender: rowData => {
           if (rowData.questionSetId) {
             const url = "/partners/"+this.props.partnerId+"/assessments/"+rowData.questionSetId;
             return <Link to={url}>{rowData.questionSetId}</Link>  
@@ -132,16 +152,21 @@ export class ModalStages extends React.Component {
             return ""
           }
         }
+      }
       },
       {
-        title: 'Created At',
-        field: 'createdAt',
+        name: 'createdAt',
+        lable: 'Created At',
+        options: {
+          filter: true,
+          sort: true,
+        }
       },
       {
-        title: 'Upload Data',
-        field: 'uploadData',
+        name: 'uploadData',
+        lable: 'Upload Data',
         filtering: true,
-        render: rowData => {
+        customBodyRender: rowData => {
           return <CsvUpload partnerId= {rowData.partnerId} assessmentId = {rowData.id}/>
         }
       }
@@ -194,7 +219,7 @@ export class ModalStages extends React.Component {
             View Assessments<br/>
           </Typography>
 
-          <MaterialTable
+          <MUIDataTable
             columns={this.columns}
             data={this.state.data}
             icons={tableIcons}

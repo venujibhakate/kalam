@@ -99,11 +99,14 @@ const stageColumn = {
     options: {
       filter: true,
       sort: true,
-      customBodyRender: rowData => {
+      customBodyRender:( rowData,tablemeta,updateValue) => {
+        
         return <StageSelect
            allStagesOptions={allStagesOptions}
            rowData={rowData}
+          label={allStages[rowData]}
            studentId={rowData['id']}
+           change={option => updateValue(option)}
         />
       }
     }

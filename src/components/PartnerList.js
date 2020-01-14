@@ -2,13 +2,15 @@ import React from 'react';
 import { forwardRef } from 'react';
 import { connect } from 'react-redux';
 
-import MaterialTable from "material-table";
+// import MaterialTable from "material-table";
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 
 import axios from 'axios';
 import {Box} from '@material-ui/core';
 
 import { theme } from '../theme/theme';
+
+import { createMuiTheme} from '@material-ui/core/styles';
 
 import ViewAssessments from './ViewAssessments';
 import PartnerLink from './PartnerLink';
@@ -29,7 +31,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
+import MUIDataTable from "mui-datatables";
 import { changeFetching } from '../store/actions/auth';
 
 import {withRouter} from 'react-router-dom';
@@ -75,44 +77,63 @@ const styles = theme => ({
 })
 
 const filterFns = []
+const columns = [
+  {
+    name: 'id',
+    label: 'ID',
+    options: {
+      filter: true,
+      sort: true,
+      paddingLeft: 100,
+     
+      customBodyRender: rowData => {
+      return <PartnerLink partnerId={rowData}/>
+    }
+  }
+  },
+  {
+    name: 'name',
+    label: 'Name',
+    filtering: true,
+    options: {
+      filter: true,
+      sort: true,
+  }
+},
 
+  {
+    name: 'View Assessments',
+    label: 'View Assessments',
+    filtering: false,
+    options: {
+      filter: true,
+      sort: true,
+      customBodyRender: rowData => {
+      return <ViewAssessments partnerId={rowData}/>
+    }
+  }
+  },
+  {
+    name: 'Create Assessment',
+    label: 'Create Assessment',
+    filtering: false,
+    options: {
+      filter: true,
+      sort: true,
+      customBodyRender: rowData => {
+      return <CreateAssessment partnerId={rowData} partnerName={rowData}/>
+    }
+  }
+  },
+]
+      
 export class PartnerList extends React.Component {
 
   constructor(props) {
 
     super(props);
     this.dataURL = baseUrl + 'partners';
-    this.columns = [
-      {
-        title: 'ID',
-        field: 'id',
-        render: rowData => {
-          return <PartnerLink partnerId={rowData.id}/>
-        }
-
-      },
-      {
-        title: 'Name',
-        field: 'name',
-        filtering: true,
-      },
-      {
-        title: 'View Assessments',
-        field: 'name',
-        filtering: false,
-        render: rowData => {
-          return <ViewAssessments partnerId={rowData.id}/>
-        }
-      },
-      {
-        title: 'Create Assessment',
-        field: 'name',
-        filtering: false,
-        render: rowData => {
-          return <CreateAssessment partnerId={rowData.id} partnerName={rowData.name}/>
-        }
-      }
-    ]
+    
           
     this.state = {
       data: [],
@@ -128,20 +149,45 @@ export class PartnerList extends React.Component {
       this.props.fetchingFinish()
     })
   }
-
+  getMuiTheme = () => createMuiTheme({
+    overrides: {
+      MUIDataTableBodyCell: {
+        root: {
+          backgroundColor: "#FFF",
+          // textAlign: 'center',
+        maxWidth: '50%'
+        }
+      },
+      
+      MUIDataTableColumn: {
+        row: {
+          height: 48,
+          paddingLeft: 24,
+          paddingRight: 24,
+          overflow: "hidden",
+          whiteSpace: 'pre-wrap',
+          textOverflow: 'ellipsis',
+        } 
+      }
+      },
+  })
   render = () => {
     const { classes } = this.props;
 
     if (!this.state.data.length) {
       return <Box></Box>
     }
-
+    
+    
     return <Box>
-      <MuiThemeProvider theme={theme}>
+  
+  <MuiThemeProvider theme={this.getMuiTheme()}>
         <div className={classes.clear}></div>
-        <MaterialTable
-          columns={this.columns}
+        
+        <MUIDataTable
+          
           data={this.state.data}
+          columns={columns}
           icons={tableIcons}
           options={{
             headerStyle: {
@@ -149,6 +195,8 @@ export class PartnerList extends React.Component {
             },
             filtering: true,
             exportButton: true,
+            selectableRows: 'none',
+
             pageSize: 10,
             showTitle: false,
             toolbar: false,
@@ -157,7 +205,9 @@ export class PartnerList extends React.Component {
           style={{maxWidth: 700, margin: '0 auto', marginTop: 25}}
         />
       </MuiThemeProvider>
+     
     </Box>
+    
   }
 
   componentDidMount() {

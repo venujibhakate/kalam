@@ -34,7 +34,8 @@ import { withRouter } from 'react-router-dom';
 
 import GlobalService from '../services/GlobalService';
 import StudentService from '../services/StudentService';
-
+// import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { EventEmitter } from './events';
 
 // API USage : https://blog.logrocket.com/patterns-for-data-fetching-in-react-981ced7e5c56/
@@ -300,13 +301,13 @@ export class Transition extends React.Component {
 
     return !this.state.modalOpen ? <div>
       <Button color="primary" align="right" onClick={this.handleOpen}>
-        <AssessmentIcon color="primary" />&nbsp;&nbsp;
+        <ChevronRightIcon color="primary" />&nbsp;&nbsp;
     </Button>
     </div> :
       <Modal
-      open={this.state.modalOpen}
-      onClose={this.handleClose}
-    >
+        open={this.state.modalOpen}
+        onClose={this.handleClose}
+      >
 
         <Box style={modalStyle} className={classes.paper}>
           <MUIDataTable
@@ -330,7 +331,7 @@ export class Transition extends React.Component {
 
           />
         </Box>
-</Modal>
+      </Modal>
   }
 }
 

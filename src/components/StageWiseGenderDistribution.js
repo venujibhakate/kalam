@@ -4,8 +4,7 @@
 import 'date-fns';
 import React from 'react';
 import { connect } from 'react-redux';
-
-import MaterialTable from "material-table";
+import MUIDataTable from "mui-datatables";
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 
 import axios from 'axios';
@@ -28,7 +27,66 @@ const styles = theme => ({
     clear: 'both'
   }
 })
+const columns= [
+  {
+    name: 'stage',
+   
+    label: 'Stage',
+    options: {
+      filter: true,
+      sort: true,
+      paddingLeft: 100,
+     
+    } 
+  },
+  {
+    name: 'female',
+    label: 'Female',
+    filtering: true,
+    options: {
+      filter: true,
+      sort: true,
+    }
+  },
 
+
+  {
+    name: 'male',
+    label: 'Male ',
+    filtering: false,
+    options: {
+      filter: true,
+      sort: true,
+    }   
+  },
+   {
+    name: 'transgender',
+    label: ' Transgender',
+    filtering: false,
+    options: {
+      filter: true,
+      sort: true,
+    }  
+  },
+   {
+    name: 'unspecified',
+    label: ' Unspecified',
+    filtering: false,
+    options: {
+      filter: true,
+      sort: true,
+    } 
+  },
+   {
+    name: "total",
+    label: ' Total Dangling',
+    filtering: false,
+    options: {
+      filter: true,
+      sort: true,
+    } 
+  }
+]
 export class StageWiseGenderDistribution extends React.Component {
 
   constructor(props) {
@@ -62,8 +120,8 @@ export class StageWiseGenderDistribution extends React.Component {
 
     return <Box>
       <MuiThemeProvider theme={theme}>
-        <MaterialTable
-          columns={StudentService.columnDanglingReports}
+      <MUIDataTable
+          columns={columns}
           data={this.state.data}
           icons={GlobalService.tableIcons}
           options={{
@@ -71,6 +129,7 @@ export class StageWiseGenderDistribution extends React.Component {
               color: theme.palette.primary.main
             },
             exportButton: true,
+            selectableRows: 'none',
             pageSize: 100,
             showTitle: false,
             toolbar: false,
